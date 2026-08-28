@@ -120,11 +120,83 @@ export default function Home() {
           </div>
 
           <div className="w-40 h-40 md:w-56 md:h-56 bg-stone-200 dark:bg-stone-800 rounded-full shrink-0 border-4 border-white dark:border-stone-900 shadow-xl overflow-hidden flex items-center justify-center transition-colors">
-            <span className="text-stone-500 dark:text-stone-400 text-sm font-medium text-center px-4">
-              [Sua Foto]
-            </span>
+            <img src="/perfil.jpeg" alt="Foto de perfil" className="w-full h-full object-cover" />
           </div>
         </motion.header>
+
+        {/* SEÇÃO DE HABILIDADES & IDIOMAS */}
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mb-20"
+        >
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-bold tracking-tight">Habilidades & Idiomas</h2>
+              <div className="h-[1px] bg-stone-200 dark:bg-stone-800 flex-1"></div>
+            </div>
+
+            {/* Grade Técnica (Agora 100% equilibrada em altura) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              
+              {/* Card 1: Linguagens */}
+              <div className="bg-stone-100 dark:bg-stone-900/60 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm h-full">
+                <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Linguagens</h3>
+                <div className="flex flex-wrap gap-2">
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Python</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">JavaScript</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">TypeScript</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Java</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Kotlin</span>
+                </div>
+              </div>
+
+              {/* Card 2: Web & Frontend */}
+              <div className="bg-stone-100 dark:bg-stone-900/60 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm h-full">
+                <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Web & UI</h3>
+                <div className="flex flex-wrap gap-2">
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">React / Next.js</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Tailwind CSS</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">HTML / CSS</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">UI/UX Design</span>
+                </div>
+              </div>
+
+              {/* Card 3: Redes & Segurança */}
+              <div className="bg-stone-100 dark:bg-stone-900/60 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm h-full">
+                <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Redes & Segurança</h3>
+                <div className="flex flex-wrap gap-2">
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Conectividade & Redes</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Segurança da Informação</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Protocolos Web</span>
+                </div>
+              </div>
+
+              {/* Card 4: Ferramentas (Agora independente) */}
+              <div className="bg-stone-100 dark:bg-stone-900/60 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm h-full">
+                <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Ferramentas & Outros</h3>
+                <div className="flex flex-wrap gap-2">
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Git & GitHub</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">SQL / Bancos</span>
+                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Arduino</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Faixa Horizontal Exclusiva para Idiomas (Ajustada com w-fit) */}
+            <div className="w-fit bg-stone-100 dark:bg-stone-900/60 px-5 py-3 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm flex items-center gap-4 mt-2">
+              <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider">Idiomas</h3>
+              <div className="flex gap-3">
+                <span className="bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 text-xs px-4 py-1.5 rounded-lg font-semibold border border-violet-200 dark:border-violet-800 shadow-sm">Português (Nativo)</span>
+                <span className="bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 text-xs px-4 py-1.5 rounded-lg font-semibold border border-violet-200 dark:border-violet-800 shadow-sm">Inglês (Fluente)</span>
+              </div>
+            </div>
+
+          </div>
+        </motion.section>
 
         {/* SEÇÃO DE PROJETOS */}
         <section className="flex flex-col gap-20">
@@ -169,10 +241,10 @@ export default function Home() {
             className="flex flex-col md:flex-row-reverse gap-8 md:gap-12 items-center"
           >
             <div className="w-full md:w-1/2 h-64 md:h-80 bg-stone-100 dark:bg-stone-900 rounded-2xl flex items-center justify-center border border-stone-200 dark:border-stone-800 shadow-sm shrink-0">
-              <span className="text-stone-400 font-medium">[Print Feed SocialBit]</span>
+              <span className="text-stone-400 font-medium">[Print Feed BitSocial]</span>
             </div>
             <div className="flex flex-col gap-4 w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">SocialBit</h2>
+              <h2 className="text-2xl font-bold">BitSocial</h2>
               <div className="flex flex-wrap gap-2">
                 <span className="bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-300 text-xs px-3 py-1 rounded-full font-semibold border border-stone-300 dark:border-stone-700">Python</span>
                 <span className="bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-300 text-xs px-3 py-1 rounded-full font-semibold border border-stone-300 dark:border-stone-700">SQL</span>
@@ -223,7 +295,7 @@ export default function Home() {
             </div>
           </motion.article>
 
-          {/* PROJETO 4 - Matchup Score (Novo) */}
+          {/* PROJETO 4 - Matchup Score */}
           <motion.article 
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -255,7 +327,7 @@ export default function Home() {
             </div>
           </motion.article>
 
-          {/* PROJETO 5 - Jogo de Ritmo em Java (Novo) */}
+          {/* PROJETO 5 - Jogo de Ritmo em Java */}
           <motion.article 
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -267,7 +339,7 @@ export default function Home() {
               <span className="text-stone-400 font-medium">[Print Jogo de Ritmo / Guitarra Arduino]</span>
             </div>
             <div className="flex flex-col gap-4 w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">PowerJorge (Java + Arduino)</h2>
+              <h2 className="text-2xl font-bold">Jogo de Ritmo (POO + Arduino)</h2>
               <div className="flex flex-wrap gap-2">
                 <span className="bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 text-xs px-3 py-1 rounded-full font-semibold border border-rose-200 dark:border-rose-800">Java (POO)</span>
                 <span className="bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 text-xs px-3 py-1 rounded-full font-semibold border border-rose-200 dark:border-rose-800">JSON</span>
