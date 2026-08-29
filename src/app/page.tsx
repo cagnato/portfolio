@@ -1,386 +1,297 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import HTMLFlipBook from "react-pageflip";
+import { Merriweather } from 'next/font/google';
+
+// Configurando a fonte clássica
+const merriweather = Merriweather({
+  weight: ['300', '400', '700', '900'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export default function Home() {
-  const [copiado, setCopiado] = useState(false);
   const [montado, setMontado] = useState(false);
-  const [abertoMobile, setAbertoMobile] = useState(false);
-  const { theme, setTheme } = useTheme();
-
-  const gavetaRef = useRef<HTMLDivElement>(null);
+  const [idioma, setIdioma] = useState<"PT" | "EN">("PT");
 
   useEffect(() => {
-    // eslint-disable-next-line
-    setMontado(true);
+    setTimeout(() => setMontado(true), 0);
+  }, []);
 
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (gavetaRef.current && !gavetaRef.current.contains(event.target as Node)) {
-        setAbertoMobile(false);
-      }
-    };
-
-    if (abertoMobile) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("touchstart", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, [abertoMobile]);
-
-  const copiarEmail = () => {
-    navigator.clipboard.writeText("seu.email@gmail.com");
-    setCopiado(true);
-    setTimeout(() => setCopiado(false), 2000);
+  const alternarIdioma = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIdioma(idioma === "PT" ? "EN" : "PT");
   };
 
+  if (!montado) return <div className="min-h-screen bg-stone-900" />;
+
   return (
-    <main className="min-h-screen bg-[#fafaf9] dark:bg-stone-950 text-stone-900 dark:text-stone-100 transition-colors duration-300 relative overflow-x-hidden">
+    // A classe da fonte agora domina todo o contêiner sem ser sobrescrita
+    <main className={`min-h-screen bg-[#2c1b12] bg-[linear-gradient(90deg,#22140d_0%,#362217_50%,#22140d_100%)] flex items-center justify-center p-4 relative overflow-hidden text-stone-900 select-none ${merriweather.className}`}>
       
-      {/* WIDGET FLUTUANTE DE TEMA */}
-      {montado && (
-        <div ref={gavetaRef} className="fixed top-24 right-0 z-50 flex items-center group">
-          <div 
-            onClick={() => setAbertoMobile(!abertoMobile)}
-            className={`bg-white/95 dark:bg-stone-950/95 backdrop-blur-md border-y border-l border-stone-300 dark:border-stone-700 dark:border-l-violet-500 rounded-l-2xl shadow-[0_0_25px_rgba(139,92,246,0.25)] p-3.5 flex items-center gap-4 transition-transform duration-300 ease-in-out cursor-pointer ${
-              abertoMobile ? "translate-x-0" : "translate-x-[calc(100%-18px)]"
-            } md:translate-x-[calc(100%-18px)] md:group-hover:translate-x-0`}
-          >
-            <span className="text-sm font-bold text-violet-700 dark:text-violet-400 uppercase tracking-wider pl-1 select-none">
-              Tema
-            </span>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setTheme(theme === "dark" ? "light" : "dark");
-              }}
-              className="relative w-16 h-8 rounded-full bg-stone-200 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 p-1 transition-colors duration-300 focus:outline-none shadow-inner cursor-pointer"
-              aria-label="Alternar tema"
-              title="Alternar tema claro/escuro"
-            >
-              <div
-                className={`w-6 h-6 rounded-full bg-white dark:bg-stone-900 shadow-md transform transition-transform duration-300 ease-in-out flex items-center justify-center text-stone-700 dark:text-stone-200 ${
-                  theme === "dark" ? "translate-x-8" : "translate-x-0"
-                }`}
-              >
-                {theme === "dark" ? (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                  </svg>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                  </svg>
-                )}
-              </div>
-            </button>
-          </div>
+      <div 
+        onClick={alternarIdioma}
+        className="absolute top-8 right-12 w-32 h-12 bg-gradient-to-b from-[#8b5a3e] to-[#5c331f] border border-[#3a1d0f] rounded-sm shadow-[0_10px_20px_rgba(0,0,0,0.5)] flex items-center justify-center cursor-pointer hover:brightness-110 transition-all z-20 group"
+        title={idioma === "PT" ? "Switch to English" : "Mudar para Português"}
+      >
+        <div className="w-[90%] h-[80%] border border-[#c68e58]/50 flex items-center justify-center">
+          <span className="text-[#f4ecc2] font-bold tracking-widest text-sm drop-shadow-md group-hover:text-white transition-colors">
+            {idioma === "PT" ? "PORTUGUÊS" : "ENGLISH"}
+          </span>
         </div>
-      )}
+      </div>
 
-      {/* CONTEÚDO PRINCIPAL */}
-      <div className="max-w-5xl mx-auto p-6 md:p-12">
-        
-        {/* CABEÇALHO / SOBRE MIM */}
-        <motion.header 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="flex flex-col-reverse md:flex-row items-center gap-8 py-12 md:py-20 border-b border-stone-200 dark:border-stone-800 mb-16 transition-colors"
+      {/* ELEMENTOS DECORATIVOS DA MESA */}
+      <div className="absolute top-20 left-24 w-24 h-28 bg-[#fdfbf7] rounded-sm shadow-xl -rotate-[15deg] p-2 flex flex-col pointer-events-none opacity-80">
+        <div className="flex-1 bg-stone-800 w-full mb-2"></div>
+      </div>
+      
+      <div className="absolute bottom-20 right-[25%] w-24 h-28 bg-[#fdfbf7] rounded-sm shadow-2xl rotate-[10deg] p-2 flex flex-col pointer-events-none opacity-90 z-0">
+        <div className="flex-1 bg-stone-700 w-full mb-2"></div>
+      </div>
+
+      <div className="absolute top-1/3 left-12 w-32 h-48 bg-[#0f0a08] rounded-sm shadow-2xl rotate-6 border-l-4 border-black opacity-80 pointer-events-none"></div>
+
+      <div className="absolute top-12 right-64 w-48 h-64 bg-[#1a2f23] rounded-sm shadow-2xl rotate-12 border-l-8 border-[#0f1f15] opacity-80 pointer-events-none">
+        <div className="absolute inset-0 bg-black/20 mix-blend-multiply"></div>
+      </div>
+
+      <div className="absolute bottom-32 left-24 w-20 h-20 rounded-full border-[3px] border-[#1a0f0a]/40 opacity-50 pointer-events-none mix-blend-multiply"></div>
+      <div className="absolute bottom-34 left-26 w-16 h-16 rounded-full border border-[#1a0f0a]/30 opacity-30 pointer-events-none mix-blend-multiply"></div>
+      
+      <div className="absolute bottom-12 left-[30%] flex items-center gap-1 -rotate-12 pointer-events-none opacity-60 mix-blend-multiply">
+        <div className="w-12 h-12 rounded-full border-[3px] border-amber-900 shadow-sm"></div>
+        <div className="w-4 h-1 bg-amber-900 -mt-2"></div>
+        <div className="w-12 h-12 rounded-full border-[3px] border-amber-900 shadow-sm"></div>
+      </div>
+      
+      <div className="absolute bottom-12 right-12 w-40 h-52 bg-[#f4ecc2] rounded-sm shadow-[0_10px_20px_rgba(0,0,0,0.6)] -rotate-6 opacity-90 pointer-events-none flex flex-col gap-3 p-5">
+        <div className="w-full h-1 bg-stone-400/50 rounded-full"></div>
+        <div className="w-3/4 h-1 bg-stone-400/50 rounded-full"></div>
+      </div>
+      <div className="absolute bottom-28 right-24 w-40 h-2 bg-gradient-to-b from-stone-800 to-black rounded-full shadow-[2px_5px_5px_rgba(0,0,0,0.5)] -rotate-12 pointer-events-none z-10">
+        <div className="absolute top-0 -left-3 w-3 h-2 bg-stone-300 rounded-l-full"></div>
+      </div>
+
+      {/* WRAPPER DO LIVRO PRINCIPAL */}
+      <div className="relative z-10 flex justify-center w-[900px]">
+        {/* @ts-expect-error - Ignorando tipagem antiga da biblioteca */}
+        <HTMLFlipBook 
+          width={450} 
+          height={600} 
+          size="fixed"
+          minWidth={315}
+          maxWidth={1000}
+          minHeight={400}
+          maxHeight={1533}
+          showCover={true}
+          usePortrait={false}
+          flippingTime={1000}
+          style={{ backgroundColor: 'transparent' }}
+          className="drop-shadow-2xl"
         >
-          <div className="flex-1 flex flex-col gap-5 text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-              Olá, sou <span className="text-violet-700 dark:text-violet-400">[Seu Nome]</span>.
-            </h1>
-            
-            <p className="text-lg text-stone-600 dark:text-stone-400 leading-relaxed max-w-2xl">
-              Desenvolvedor Full-stack. Apaixonado por aprender, utilizo a tecnologia para resolver problemas e dar vida a ideias, sejam elas profissionais ou hobbies.
+          {/* PÁG 1: Capa */}
+          <div className="bg-gradient-to-br from-[#7a4c33] via-[#8b5a3e] to-[#5c331f] border-l-[12px] border-[#3a1d0f] shadow-[-10px_10px_30px_rgba(0,0,0,0.8)] relative overflow-hidden rounded-r-md">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-30 mix-blend-multiply pointer-events-none"></div>
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-12 text-center">
+              <h1 className="text-4xl md:text-5xl font-bold text-[#2a0c0c] tracking-widest drop-shadow-sm mb-4">PORTFÓLIO</h1>
+              <div className="w-full h-1 bg-[#2a0c0c]/80 mb-6 rounded-full shadow-sm"></div>
+              <p className="text-lg text-[#2a0c0c] font-bold tracking-wide drop-shadow-sm">Feito por Davi Cagnato Pinto</p>
+            </div>
+          </div>
+
+          {/* PÁG 2: Verso da Capa */}
+          <div className="bg-[#5c331f] border-r-8 border-[#3a1d0f] shadow-[inset_15px_0_30px_rgba(0,0,0,0.8)] rounded-l-md relative h-full">
+             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-20 mix-blend-multiply pointer-events-none"></div>
+          </div>
+
+          {/* PÁG 3: Sobre o Autor */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-6 border-b-2 border-dotted border-[#4a1c1c]/30 pb-2">
+              {idioma === "PT" ? "Sobre o Autor" : "About the Author"}
+            </h2>
+            <div className="w-32 h-32 bg-stone-300 rounded-full mb-6 float-right ml-4 border-4 border-[#8b5a3e]/20 shadow-md"></div>
+            <p className="text-stone-800 leading-relaxed text-sm text-justify">
+              {idioma === "PT" 
+                ? "Desenvolvedor Full-stack apaixonado por aprender. Utilizo a tecnologia para resolver problemas e dar vida a ideias, sejam elas profissionais ou hobbies. Minha jornada mistura lógica profunda com interfaces intuitivas." 
+                : "Full-stack Developer passionate about learning. I use technology to solve problems and bring ideas to life, whether professional or personal hobbies. My journey blends deep logic with intuitive interfaces."}
             </p>
-            
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-4">
-              <a href="LINK_DO_SEU_LINKEDIN" target="_blank" className="bg-violet-700 hover:bg-violet-800 dark:bg-violet-600 dark:hover:bg-violet-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-sm">
-                LinkedIn
-              </a>
-              <a href="LINK_DO_SEU_GITHUB" target="_blank" className="bg-stone-900 dark:bg-stone-100 dark:text-stone-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-stone-800 dark:hover:bg-white transition-colors shadow-sm">
-                GitHub
-              </a>
-              <button 
-                onClick={copiarEmail}
-                className="border-2 border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 w-32 py-3 rounded-lg font-semibold hover:border-stone-300 dark:hover:border-stone-600 hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-colors shadow-sm flex items-center justify-center"
-              >
-                {copiado ? "Copiado!" : "E-mail"}
-              </button>
-            </div>
+            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">1</span>
           </div>
 
-          <div className="w-40 h-40 md:w-56 md:h-56 bg-stone-200 dark:bg-stone-800 rounded-full shrink-0 border-4 border-white dark:border-stone-900 shadow-xl overflow-hidden flex items-center justify-center transition-colors">
-            <img src="/perfil.jpeg" alt="Foto de perfil" className="w-full h-full object-cover" />
+          {/* PÁG 4: Habilidades */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-6 border-b-2 border-dotted border-[#4a1c1c]/30 pb-2">
+              {idioma === "PT" ? "Arsenal Técnico" : "Technical Arsenal"}
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-bold text-stone-800 text-base">{idioma === "PT" ? "Linguagens" : "Languages"}</h3>
+                <p className="text-stone-600 text-sm mt-1">Python, JavaScript, TypeScript, Java, Kotlin.</p>
+              </div>
+              <div>
+                <h3 className="font-bold text-stone-800 text-base">{idioma === "PT" ? "Ferramentas & Dados" : "Tools & Data"}</h3>
+                <p className="text-stone-600 text-sm mt-1">SQL, Scikit-Learn, Git, Arduino.</p>
+              </div>
+              <div>
+                <h3 className="font-bold text-stone-800 text-base">Web & UI</h3>
+                <p className="text-stone-600 text-sm mt-1">React, Next.js, Tailwind CSS, UI/UX Design.</p>
+              </div>
+            </div>
+            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">2</span>
           </div>
-        </motion.header>
 
-        {/* SEÇÃO DE HABILIDADES & IDIOMAS */}
-        <motion.section 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="mb-20"
-        >
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold tracking-tight">Habilidades & Idiomas</h2>
-              <div className="h-[1px] bg-stone-200 dark:bg-stone-800 flex-1"></div>
-            </div>
-
-            {/* Grade Técnica (Agora 100% equilibrada em altura) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              
-              {/* Card 1: Linguagens */}
-              <div className="bg-stone-100 dark:bg-stone-900/60 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm h-full">
-                <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Linguagens</h3>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Python</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">JavaScript</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">TypeScript</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Java</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Kotlin</span>
-                </div>
-              </div>
-
-              {/* Card 2: Web & Frontend */}
-              <div className="bg-stone-100 dark:bg-stone-900/60 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm h-full">
-                <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Web & UI</h3>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">React / Next.js</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Tailwind CSS</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">HTML / CSS</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">UI/UX Design</span>
-                </div>
-              </div>
-
-              {/* Card 3: Redes & Segurança */}
-              <div className="bg-stone-100 dark:bg-stone-900/60 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm h-full">
-                <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Redes & Segurança</h3>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Conectividade & Redes</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Segurança da Informação</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Protocolos Web</span>
-                </div>
-              </div>
-
-              {/* Card 4: Ferramentas (Agora independente) */}
-              <div className="bg-stone-100 dark:bg-stone-900/60 p-5 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm h-full">
-                <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3">Ferramentas & Outros</h3>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Git & GitHub</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">SQL / Bancos</span>
-                  <span className="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs px-3 py-1.5 rounded-lg font-medium border border-stone-200 dark:border-stone-700 shadow-sm">Arduino</span>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Faixa Horizontal Exclusiva para Idiomas (Ajustada com w-fit) */}
-            <div className="w-fit bg-stone-100 dark:bg-stone-900/60 px-5 py-3 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm flex items-center gap-4 mt-2">
-              <h3 className="text-sm font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider">Idiomas</h3>
-              <div className="flex gap-3">
-                <span className="bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 text-xs px-4 py-1.5 rounded-lg font-semibold border border-violet-200 dark:border-violet-800 shadow-sm">Português (Nativo)</span>
-                <span className="bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 text-xs px-4 py-1.5 rounded-lg font-semibold border border-violet-200 dark:border-violet-800 shadow-sm">Inglês (Fluente)</span>
-              </div>
-            </div>
-
+          {/* PÁG 5: Índice */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-8 border-b-2 border-dotted border-[#4a1c1c]/30 pb-2">
+              {idioma === "PT" ? "Índice de Obras" : "Table of Contents"}
+            </h2>
+            <ul className="space-y-4 text-sm text-stone-800">
+              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
+                <span className="font-bold">I. PredictiveGuard</span><span className="text-stone-500">Pág 7</span>
+              </li>
+              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
+                <span className="font-bold">II. BitSocial</span><span className="text-stone-500">Pág 9</span>
+              </li>
+              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
+                <span className="font-bold">III. Guia de Vôlei</span><span className="text-stone-500">Pág 11</span>
+              </li>
+              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
+                <span className="font-bold">IV. Matchup Score</span><span className="text-stone-500">Pág 13</span>
+              </li>
+              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
+                <span className="font-bold">V. Jogo de Ritmo</span><span className="text-stone-500">Pág 15</span>
+              </li>
+            </ul>
+            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">3</span>
           </div>
-        </motion.section>
 
-        {/* SEÇÃO DE PROJETOS */}
-        <section className="flex flex-col gap-20">
-          
-          {/* PROJETO 1 - IA */}
-          <motion.article 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col md:flex-row gap-8 md:gap-12 items-center"
-          >
-            <div className="w-full md:w-1/2 h-64 md:h-80 bg-stone-100 dark:bg-stone-900 rounded-2xl flex items-center justify-center border border-stone-200 dark:border-stone-800 shadow-sm shrink-0">
-              <span className="text-stone-400 font-medium">[Gráfico Simulador IA]</span>
+          {/* PÁG 6: Proj 1 (Imagem) */}
+          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
+            <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center">
+              <span className="text-stone-500 text-sm">[Print PredictiveGuard]</span>
             </div>
-            <div className="flex flex-col gap-4 w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">Simulador de Manutenção Preditiva</h2>
-              <div className="flex gap-2">
-                <span className="bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 text-xs px-3 py-1 rounded-full font-semibold border border-violet-200 dark:border-violet-800">Python</span>
-                <span className="bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 text-xs px-3 py-1 rounded-full font-semibold border border-violet-200 dark:border-violet-800">Scikit-Learn</span>
-              </div>
-              <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
-                Modelo de Machine Learning desenvolvido para simular e prever falhas em maquinário industrial, gerando alertas preditivos para evitar paradas não planejadas.
-              </p>
-              <div className="flex gap-3 mt-2">
-                <button className="bg-stone-900 dark:bg-stone-100 dark:text-stone-900 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-stone-800 dark:hover:bg-white transition-colors">
-                  Demonstração
-                </button>
-                <button className="border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-5 py-2.5 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
-                  Código
-                </button>
-              </div>
+            <div className="mt-6 flex flex-wrap gap-2 justify-center">
+              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">Python</span>
+              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">Scikit-Learn</span>
             </div>
-          </motion.article>
+            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">4</span>
+          </div>
 
-          {/* PROJETO 2 - BitSocial */}
-          <motion.article 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col md:flex-row-reverse gap-8 md:gap-12 items-center"
-          >
-            <div className="w-full md:w-1/2 h-64 md:h-80 bg-stone-100 dark:bg-stone-900 rounded-2xl flex items-center justify-center border border-stone-200 dark:border-stone-800 shadow-sm shrink-0">
-              <span className="text-stone-400 font-medium">[Print Feed BitSocial]</span>
-            </div>
-            <div className="flex flex-col gap-4 w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">BitSocial</h2>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-300 text-xs px-3 py-1 rounded-full font-semibold border border-stone-300 dark:border-stone-700">Python</span>
-                <span className="bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-300 text-xs px-3 py-1 rounded-full font-semibold border border-stone-300 dark:border-stone-700">SQL</span>
-                <span className="bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-300 text-xs px-3 py-1 rounded-full font-semibold border border-stone-300 dark:border-stone-700">JavaScript</span>
-              </div>
-              <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
-                Rede social voltada para devs, criada como um local descontraído para interagir, compartilhar ideias e relaxar fora do circuito puramente corporativo.
-              </p>
-              <div className="flex gap-3 mt-2">
-                <button className="bg-stone-900 dark:bg-stone-100 dark:text-stone-900 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-stone-800 dark:hover:bg-white transition-colors">
-                  Ver Projeto
-                </button>
-                <button className="border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-5 py-2.5 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
-                  Código
-                </button>
-              </div>
-            </div>
-          </motion.article>
-
-          {/* PROJETO 3 - Guia de Vôlei */}
-          <motion.article 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col md:flex-row gap-8 md:gap-12 items-center"
-          >
-            <div className="w-full md:w-1/2 h-64 md:h-80 bg-stone-100 dark:bg-stone-900 rounded-2xl flex items-center justify-center border border-stone-200 dark:border-stone-800 shadow-sm shrink-0">
-              <span className="text-stone-400 font-medium">[Print Guia de Vôlei]</span>
-            </div>
-            <div className="flex flex-col gap-4 w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">Guia Interativo de Vôlei</h2>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 text-xs px-3 py-1 rounded-full font-semibold border border-amber-200 dark:border-amber-800">JavaScript</span>
-                <span className="bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 text-xs px-3 py-1 rounded-full font-semibold border border-amber-200 dark:border-amber-800">UI/UX</span>
-              </div>
-              <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
-                Projeto baseado em hobby pessoal. Transforma regras e táticas complexas de voleibol em uma experiência visual, interativa e altamente responsiva.
-              </p>
-              <div className="flex gap-3 mt-2">
-                <button className="bg-stone-900 dark:bg-stone-100 dark:text-stone-900 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-stone-800 dark:hover:bg-white transition-colors">
-                  Ver Projeto
-                </button>
-                <button className="border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-5 py-2.5 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
-                  Código
-                </button>
-              </div>
-            </div>
-          </motion.article>
-
-          {/* PROJETO 4 - Matchup Score */}
-          <motion.article 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col md:flex-row-reverse gap-8 md:gap-12 items-center"
-          >
-            <div className="w-full md:w-1/2 h-64 md:h-80 bg-stone-100 dark:bg-stone-900 rounded-2xl flex items-center justify-center border border-stone-200 dark:border-stone-800 shadow-sm shrink-0">
-              <span className="text-stone-400 font-medium">[Print Matchup Score]</span>
-            </div>
-            <div className="flex flex-col gap-4 w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">Matchup Score</h2>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-cyan-50 dark:bg-cyan-950/50 text-cyan-700 dark:text-cyan-300 text-xs px-3 py-1 rounded-full font-semibold border border-cyan-200 dark:border-cyan-800">TypeScript</span>
-                <span className="bg-cyan-50 dark:bg-cyan-950/50 text-cyan-700 dark:text-cyan-300 text-xs px-3 py-1 rounded-full font-semibold border border-cyan-200 dark:border-cyan-800">JavaScript</span>
-                <span className="bg-cyan-50 dark:bg-cyan-950/50 text-cyan-700 dark:text-cyan-300 text-xs px-3 py-1 rounded-full font-semibold border border-cyan-200 dark:border-cyan-800">HTML/CSS</span>
-              </div>
-              <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
-                Plataforma web para reserva de quadras e criação de eventos esportivos inspirada no sistema de lobbies de jogos. Permite gerenciar partidas públicas (livres) e privadas (com aprovação de participantes), facilitando a locação de espaços e a união de jogadores.
-              </p>
-              <div className="flex gap-3 mt-2">
-                <button className="bg-stone-900 dark:bg-stone-100 dark:text-stone-900 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-stone-800 dark:hover:bg-white transition-colors">
-                  Demonstração
-                </button>
-                <button className="border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-5 py-2.5 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
-                  Código
-                </button>
-              </div>
-            </div>
-          </motion.article>
-
-          {/* PROJETO 5 - Jogo de Ritmo em Java */}
-          <motion.article 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col md:flex-row gap-8 md:gap-12 items-center"
-          >
-            <div className="w-full md:w-1/2 h-64 md:h-80 bg-stone-100 dark:bg-stone-900 rounded-2xl flex items-center justify-center border border-stone-200 dark:border-stone-800 shadow-sm shrink-0">
-              <span className="text-stone-400 font-medium">[Print Jogo de Ritmo / Guitarra Arduino]</span>
-            </div>
-            <div className="flex flex-col gap-4 w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">Jogo de Ritmo (POO + Arduino)</h2>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 text-xs px-3 py-1 rounded-full font-semibold border border-rose-200 dark:border-rose-800">Java (POO)</span>
-                <span className="bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 text-xs px-3 py-1 rounded-full font-semibold border border-rose-200 dark:border-rose-800">JSON</span>
-                <span className="bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 text-xs px-3 py-1 rounded-full font-semibold border border-rose-200 dark:border-rose-800">Hardware / Arduino</span>
-              </div>
-              <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
-                Jogo de ritmo desenvolvido inteiramente em Java aplicando conceitos avançados de Orientação a Objetos. Possui persistência de dados via JSON, 3 músicas totalmente jogáveis e suporte duplo para jogar tanto no teclado quanto em uma guitarra física construída pelo grupo utilizando Arduino.
-              </p>
-              <div className="flex gap-3 mt-2">
-                <button className="bg-stone-900 dark:bg-stone-100 dark:text-stone-900 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-stone-800 dark:hover:bg-white transition-colors">
-                  Demonstração
-                </button>
-                <button className="border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-5 py-2.5 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
-                  Código
-                </button>
-              </div>
-            </div>
-          </motion.article>
-
-        </section>
-
-        {/* RODAPÉ */}
-        <footer className="py-8 md:py-12 border-t border-stone-200 dark:border-stone-800 mt-20 text-center text-stone-500 text-sm">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p>
-              © {new Date().getFullYear()} [Seu Nome]. Todos os direitos reservados.
+          {/* PÁG 7: Proj 1 (Texto) */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">PredictiveGuard</h2>
+            <p className="text-stone-800 leading-relaxed text-sm text-justify">
+              {idioma === "PT" ? "Modelo de Machine Learning desenvolvido para simular e prever falhas em maquinário industrial, gerando alertas preditivos para evitar paradas não planejadas." : "Machine Learning model developed to simulate and predict industrial machinery failures, generating predictive alerts to prevent unplanned downtime."}
             </p>
-            <div className="flex items-center gap-6">
-              <span className="hidden md:inline-block">Construído com Next.js & Tailwind</span>
-              <div className="flex gap-4 font-medium">
-                <a href="LINK_DO_SEU_LINKEDIN" target="_blank" className="hover:text-violet-700 dark:hover:text-violet-400 transition-colors">
-                  LinkedIn
-                </a>
-                <a href="LINK_DO_SEU_GITHUB" target="_blank" className="hover:text-stone-900 dark:hover:text-stone-100 transition-colors">
-                  GitHub
-                </a>
-              </div>
+            <div className="mt-8 flex gap-4">
+              <button className="px-6 py-2 bg-[#4a1c1c] text-white rounded hover:bg-[#3a1d0f] transition-colors text-sm">{idioma === "PT" ? "Ver Código" : "View Code"}</button>
             </div>
+            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">5</span>
           </div>
-        </footer>
 
+          {/* PÁG 8: Proj 2 (Imagem) */}
+          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
+            <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center">
+              <span className="text-stone-500 text-sm">[Print BitSocial]</span>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2 justify-center">
+              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">Python</span>
+              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">SQL</span>
+            </div>
+            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">6</span>
+          </div>
+
+          {/* PÁG 9: Proj 2 (Texto) */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">BitSocial</h2>
+            <p className="text-stone-800 leading-relaxed text-sm text-justify">
+              {idioma === "PT" ? "Rede social voltada para devs, criada como um local descontraído para interagir, compartilhar ideias e relaxar fora do circuito puramente corporativo." : "Social network aimed at devs, created as a relaxed place to interact, share ideas, and unwind outside the corporate circuit."}
+            </p>
+            <div className="mt-8 flex gap-4">
+              <button className="px-6 py-2 bg-[#4a1c1c] text-white rounded hover:bg-[#3a1d0f] text-sm">{idioma === "PT" ? "Ver Projeto" : "View Project"}</button>
+            </div>
+            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">7</span>
+          </div>
+
+          {/* PÁG 10: Proj 3 (Imagem) */}
+          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
+             <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center">
+              <span className="text-stone-500 text-sm">[Print Vôlei]</span>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2 justify-center">
+              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">JavaScript</span>
+            </div>
+            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">8</span>
+          </div>
+
+          {/* PÁG 11: Proj 3 (Texto) */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">Guia de Vôlei</h2>
+            <p className="text-stone-800 leading-relaxed text-sm text-justify">
+              {idioma === "PT" ? "Transforma regras e táticas complexas de voleibol em uma experiência visual, interativa e responsiva." : "Transforms complex volleyball rules and tactics into a visual, interactive, and highly responsive experience."}
+            </p>
+            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">9</span>
+          </div>
+
+          {/* PÁG 12: Proj 4 (Imagem) */}
+          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
+            <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center"><span className="text-stone-500 text-sm">[Matchup]</span></div>
+            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">10</span>
+          </div>
+
+          {/* PÁG 13: Proj 4 (Texto) */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">Matchup Score</h2>
+            <p className="text-stone-800 text-sm text-justify">
+              {idioma === "PT" ? "Plataforma para reserva de quadras e criação de eventos esportivos inspirada no sistema de lobbies." : "Platform for booking courts and creating sports events inspired by game lobby systems."}
+            </p>
+            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">11</span>
+          </div>
+
+          {/* PÁG 14: Proj 5 (Imagem) */}
+          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
+            <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center"><span className="text-stone-500 text-sm">[Ritmo]</span></div>
+            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">12</span>
+          </div>
+
+          {/* PÁG 15: Proj 5 (Texto) */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">Jogo de Ritmo</h2>
+            <p className="text-stone-800 text-sm text-justify">
+              {idioma === "PT" ? "Jogo de ritmo em Java com suporte a guitarra física (Arduino)." : "Rhythm game in Java with physical guitar support via Arduino."}
+            </p>
+            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">13</span>
+          </div>
+
+          {/* PÁG 16: Contato */}
+          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
+            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-6">{idioma === "PT" ? "Contato" : "Contact"}</h2>
+            <p className="text-stone-700">email@exemplo.com</p>
+            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">14</span>
+          </div>
+
+          {/* PÁG 17: Contracapa interna */}
+          <div className="bg-[#5c331f] border-l-8 border-[#3a1d0f] shadow-[inset_-15px_0_30px_rgba(0,0,0,0.8)] rounded-r-md relative h-full">
+             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-20 mix-blend-multiply pointer-events-none"></div>
+          </div>
+
+          {/* PÁG 18: Contracapa Externa */}
+          <div className="bg-[#5c331f] border-r-8 border-[#3a1d0f] shadow-[-10px_10px_30px_rgba(0,0,0,0.8)] rounded-l-md relative h-full flex items-center justify-center">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-30 mix-blend-multiply pointer-events-none"></div>
+            <div className="w-16 h-16 border-2 border-[#3a1d0f] rounded-full opacity-30"></div>
+          </div>
+
+        </HTMLFlipBook>
+      </div>
+
+      {/* Versão Mobile */}
+      <div className="md:hidden text-stone-300 text-center px-6 z-10">
+        <p className="text-xl border-b border-stone-600 pb-2 mb-2 font-bold">Atenção</p>
+        <p>A experiência imersiva deste tomo requer uma tela mais ampla.</p>
       </div>
     </main>
   );
