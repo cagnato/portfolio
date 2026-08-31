@@ -1,298 +1,470 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import HTMLFlipBook from "react-pageflip";
-import { Merriweather } from 'next/font/google';
+import { motion, AnimatePresence } from "framer-motion";
 
-// Configurando a fonte clássica
-const merriweather = Merriweather({
-  weight: ['300', '400', '700', '900'],
-  subsets: ['latin'],
-  display: 'swap',
-});
+const PROJETOS = [
+  {
+    id: 1,
+    titulo: "PredictiveGuard",
+    tech: "Python • Scikit-Learn",
+    descricao: "Modelo de Machine Learning para simular e prever falhas em maquinário industrial.",
+    thumb: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=400&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=1920&auto=format&fit=crop",
+    link: "#",
+  },
+  {
+    id: 2,
+    titulo: "BitSocial",
+    tech: "Python • SQL",
+    descricao: "Rede social voltada para devs interagirem e compartilharem ideias.",
+    thumb: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=400&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1920&auto=format&fit=crop",
+    link: "#",
+  },
+  {
+    id: 3,
+    titulo: "Guia de Vôlei",
+    tech: "JavaScript",
+    descricao: "Experiência visual e interativa sobre táticas e regras do voleibol.",
+    thumb: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=400&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1920&auto=format&fit=crop",
+    link: "#",
+  },
+  {
+    id: 4,
+    titulo: "Matchup Score",
+    tech: "React • Next.js",
+    descricao: "Plataforma de reserva de quadras inspirada em lobbies de jogos.",
+    thumb: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920&auto=format&fit=crop",
+    link: "#",
+  },
+  {
+    id: 5,
+    titulo: "Jogo de Ritmo",
+    tech: "Java • Arduino",
+    descricao: "Jogo de ritmo com suporte a guitarra física.",
+    thumb: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=400&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=1920&auto=format&fit=crop",
+    link: "#",
+  },
+];
 
 export default function Home() {
-  const [montado, setMontado] = useState(false);
-  const [idioma, setIdioma] = useState<"PT" | "EN">("PT");
+  const [telaAtiva, setTelaAtiva] = useState<"login" | "dashboard">("login");
+  const [abaAtiva, setAbaAtiva] = useState<"projetos" | "sobre" | "conquistas">("projetos");
+  const [projetoFocado, setProjetoFocado] = useState(0);
+  const [hora, setHora] = useState("");
 
   useEffect(() => {
-    setTimeout(() => setMontado(true), 0);
+    const atualizarHora = () => {
+      const agora = new Date();
+      setHora(agora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    };
+    atualizarHora();
+    const intervalo = setInterval(atualizarHora, 1000);
+    return () => clearInterval(intervalo);
   }, []);
 
-  const alternarIdioma = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIdioma(idioma === "PT" ? "EN" : "PT");
+  useEffect(() => {
+    if (telaAtiva !== "dashboard" || abaAtiva !== "projetos") return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        setProjetoFocado((prev) => Math.min(prev + 1, PROJETOS.length - 1));
+      } else if (e.key === "ArrowLeft") {
+        setProjetoFocado((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === "Enter") {
+        window.open(PROJETOS[projetoFocado].link, "_blank");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [telaAtiva, abaAtiva, projetoFocado]);
+
+  const entrarNoSistema = () => setTelaAtiva("dashboard");
+  const voltarProLogin = () => {
+    setTelaAtiva("login");
+    setAbaAtiva("projetos"); 
   };
 
-  if (!montado) return <div className="min-h-screen bg-stone-900" />;
-
   return (
-    // A classe da fonte agora domina todo o contêiner sem ser sobrescrita
-    <main className={`min-h-screen bg-[#2c1b12] bg-[linear-gradient(90deg,#22140d_0%,#362217_50%,#22140d_100%)] flex items-center justify-center p-4 relative overflow-hidden text-stone-900 select-none ${merriweather.className}`}>
+    <main className="min-h-screen bg-[#0b0c10] text-white overflow-hidden select-none font-sans flex items-center justify-center relative z-0">
       
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <AnimatePresence mode="wait">
+        {telaAtiva === "login" && (
+          <motion.div 
+            key="login"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="flex flex-col items-center justify-center z-10 w-full"
+          >
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
-      <div 
-        onClick={alternarIdioma}
-        className="absolute top-8 right-12 w-32 h-12 bg-gradient-to-b from-[#8b5a3e] to-[#5c331f] border border-[#3a1d0f] rounded-sm shadow-[0_10px_20px_rgba(0,0,0,0.5)] flex items-center justify-center cursor-pointer hover:brightness-110 transition-all z-20 group"
-        title={idioma === "PT" ? "Switch to English" : "Mudar para Português"}
-      >
-        <div className="w-[90%] h-[80%] border border-[#c68e58]/50 flex items-center justify-center">
-          <span className="text-[#f4ecc2] font-bold tracking-widest text-sm drop-shadow-md group-hover:text-white transition-colors">
-            {idioma === "PT" ? "PORTUGUÊS" : "ENGLISH"}
-          </span>
-        </div>
-      </div>
+            <motion.h1 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-3xl md:text-4xl font-light tracking-wide mb-16 text-stone-200"
+            >
+              Welcome Back to My Portfolio
+            </motion.h1>
 
-      {/* ELEMENTOS DECORATIVOS DA MESA */}
-      <div className="absolute top-20 left-24 w-24 h-28 bg-[#fdfbf7] rounded-sm shadow-xl -rotate-[15deg] p-2 flex flex-col pointer-events-none opacity-80">
-        <div className="flex-1 bg-stone-800 w-full mb-2"></div>
-      </div>
-      
-      <div className="absolute bottom-20 right-[25%] w-24 h-28 bg-[#fdfbf7] rounded-sm shadow-2xl rotate-[10deg] p-2 flex flex-col pointer-events-none opacity-90 z-0">
-        <div className="flex-1 bg-stone-700 w-full mb-2"></div>
-      </div>
-
-      <div className="absolute top-1/3 left-12 w-32 h-48 bg-[#0f0a08] rounded-sm shadow-2xl rotate-6 border-l-4 border-black opacity-80 pointer-events-none"></div>
-
-      <div className="absolute top-12 right-64 w-48 h-64 bg-[#1a2f23] rounded-sm shadow-2xl rotate-12 border-l-8 border-[#0f1f15] opacity-80 pointer-events-none">
-        <div className="absolute inset-0 bg-black/20 mix-blend-multiply"></div>
-      </div>
-
-      <div className="absolute bottom-32 left-24 w-20 h-20 rounded-full border-[3px] border-[#1a0f0a]/40 opacity-50 pointer-events-none mix-blend-multiply"></div>
-      <div className="absolute bottom-34 left-26 w-16 h-16 rounded-full border border-[#1a0f0a]/30 opacity-30 pointer-events-none mix-blend-multiply"></div>
-      
-      <div className="absolute bottom-12 left-[30%] flex items-center gap-1 -rotate-12 pointer-events-none opacity-60 mix-blend-multiply">
-        <div className="w-12 h-12 rounded-full border-[3px] border-amber-900 shadow-sm"></div>
-        <div className="w-4 h-1 bg-amber-900 -mt-2"></div>
-        <div className="w-12 h-12 rounded-full border-[3px] border-amber-900 shadow-sm"></div>
-      </div>
-      
-      <div className="absolute bottom-12 right-12 w-40 h-52 bg-[#f4ecc2] rounded-sm shadow-[0_10px_20px_rgba(0,0,0,0.6)] -rotate-6 opacity-90 pointer-events-none flex flex-col gap-3 p-5">
-        <div className="w-full h-1 bg-stone-400/50 rounded-full"></div>
-        <div className="w-3/4 h-1 bg-stone-400/50 rounded-full"></div>
-      </div>
-      <div className="absolute bottom-28 right-24 w-40 h-2 bg-gradient-to-b from-stone-800 to-black rounded-full shadow-[2px_5px_5px_rgba(0,0,0,0.5)] -rotate-12 pointer-events-none z-10">
-        <div className="absolute top-0 -left-3 w-3 h-2 bg-stone-300 rounded-l-full"></div>
-      </div>
-
-      {/* WRAPPER DO LIVRO PRINCIPAL */}
-      <div className="relative z-10 flex justify-center w-[900px]">
-        {/* @ts-expect-error - Ignorando tipagem antiga da biblioteca */}
-        <HTMLFlipBook 
-          width={450} 
-          height={600} 
-          size="fixed"
-          minWidth={315}
-          maxWidth={1000}
-          minHeight={400}
-          maxHeight={1533}
-          showCover={true}
-          usePortrait={false}
-          flippingTime={1000}
-          style={{ backgroundColor: 'transparent' }}
-          className="drop-shadow-2xl"
-        >
-          {/* PÁG 1: Capa */}
-          <div className="bg-gradient-to-br from-[#7a4c33] via-[#8b5a3e] to-[#5c331f] border-l-[12px] border-[#3a1d0f] shadow-[-10px_10px_30px_rgba(0,0,0,0.8)] relative overflow-hidden rounded-r-md">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-30 mix-blend-multiply pointer-events-none"></div>
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-12 text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-[#2a0c0c] tracking-widest drop-shadow-sm mb-4">PORTFÓLIO</h1>
-              <div className="w-full h-1 bg-[#2a0c0c]/80 mb-6 rounded-full shadow-sm"></div>
-              <p className="text-lg text-[#2a0c0c] font-bold tracking-wide drop-shadow-sm">Feito por Davi Cagnato Pinto</p>
-            </div>
-          </div>
-
-          {/* PÁG 2: Verso da Capa */}
-          <div className="bg-[#5c331f] border-r-8 border-[#3a1d0f] shadow-[inset_15px_0_30px_rgba(0,0,0,0.8)] rounded-l-md relative h-full">
-             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-20 mix-blend-multiply pointer-events-none"></div>
-          </div>
-
-          {/* PÁG 3: Sobre o Autor */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-6 border-b-2 border-dotted border-[#4a1c1c]/30 pb-2">
-              {idioma === "PT" ? "Sobre o Autor" : "About the Author"}
-            </h2>
-            <div className="w-32 h-32 bg-stone-300 rounded-full mb-6 float-right ml-4 border-4 border-[#8b5a3e]/20 shadow-md"></div>
-            <p className="text-stone-800 leading-relaxed text-sm text-justify">
-              {idioma === "PT" 
-                ? "Desenvolvedor Full-stack apaixonado por aprender. Utilizo a tecnologia para resolver problemas e dar vida a ideias, sejam elas profissionais ou hobbies. Minha jornada mistura lógica profunda com interfaces intuitivas." 
-                : "Full-stack Developer passionate about learning. I use technology to solve problems and bring ideas to life, whether professional or personal hobbies. My journey blends deep logic with intuitive interfaces."}
-            </p>
-            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">1</span>
-          </div>
-
-          {/* PÁG 4: Habilidades */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-6 border-b-2 border-dotted border-[#4a1c1c]/30 pb-2">
-              {idioma === "PT" ? "Arsenal Técnico" : "Technical Arsenal"}
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-bold text-stone-800 text-base">{idioma === "PT" ? "Linguagens" : "Languages"}</h3>
-                <p className="text-stone-600 text-sm mt-1">Python, JavaScript, TypeScript, Java, Kotlin.</p>
+            <div className="flex gap-16 items-center">
+              <div className="flex flex-col items-center gap-4 opacity-50 hover:opacity-100 transition-opacity cursor-not-allowed">
+                <div className="w-24 h-24 rounded-full bg-stone-800/50 border-2 border-stone-600 flex items-center justify-center text-3xl font-light">
+                  +
+                </div>
+                <span className="text-sm tracking-wider">Add User</span>
               </div>
-              <div>
-                <h3 className="font-bold text-stone-800 text-base">{idioma === "PT" ? "Ferramentas & Dados" : "Tools & Data"}</h3>
-                <p className="text-stone-600 text-sm mt-1">SQL, Scikit-Learn, Git, Arduino.</p>
+
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={entrarNoSistema}
+                className="flex flex-col items-center gap-4 cursor-pointer group"
+              >
+                <div className="relative w-32 h-32 rounded-full p-1 bg-gradient-to-b from-stone-400 to-transparent">
+                  <div className="w-full h-full rounded-full bg-stone-800 border-4 border-[#0b0c10] overflow-hidden shadow-[0_0_30px_rgba(255,255,255,0.1)] group-hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] transition-all flex items-center justify-center">
+                    <img src="/perfil.jpeg" alt="Davi Cagnato" className="w-full h-full object-cover" draggable="false" />
+                  </div>
+                </div>
+                <span className="text-lg tracking-wider font-medium text-white flex items-center gap-2">
+                  Davi Cagnato
+                </span>
+              </motion.div>
+            </div>
+            
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="absolute bottom-10 flex items-center gap-2 text-stone-400 text-sm"
+            >
+              <span className="w-4 h-4 rounded-full border border-stone-400 flex items-center justify-center text-[10px]">X</span>
+              <span>Select</span>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {telaAtiva === "dashboard" && (
+          <motion.div
+            key="dashboard"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="w-full h-screen flex flex-col pt-10 px-12 relative"
+          >
+            <AnimatePresence mode="wait">
+              {abaAtiva === "projetos" ? (
+                <motion.div 
+                  key={`bg-${projetoFocado}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  style={{ backgroundImage: `url(${PROJETOS[projetoFocado].bg})` }}
+                  className="absolute inset-0 -z-10 bg-cover bg-center"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b0c10] via-[#0b0c10]/80 to-[#0b0c10]/30"></div>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="bg-other"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0 -z-10 bg-[#09090b]"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b0c10] via-[#0b0c10]/80 to-transparent"></div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Cabeçalho */}
+            <header className="flex justify-between items-center mb-16">
+              <div className="flex gap-8 text-lg">
+                <button 
+                  onClick={() => setAbaAtiva("projetos")}
+                  className={`pb-1 transition-colors ${abaAtiva === "projetos" ? "font-medium text-white border-b-2 border-white" : "font-light text-stone-400 hover:text-white"}`}
+                >
+                  Projetos
+                </button>
+                <button 
+                  onClick={() => setAbaAtiva("sobre")}
+                  className={`pb-1 transition-colors ${abaAtiva === "sobre" ? "font-medium text-white border-b-2 border-white" : "font-light text-stone-400 hover:text-white"}`}
+                >
+                  Sobre Mim
+                </button>
               </div>
-              <div>
-                <h3 className="font-bold text-stone-800 text-base">Web & UI</h3>
-                <p className="text-stone-600 text-sm mt-1">React, Next.js, Tailwind CSS, UI/UX Design.</p>
+              
+              <div className="flex items-center gap-7 text-stone-300">
+                <svg onClick={() => setAbaAtiva("projetos")} aria-label="Início" className="w-6 h-6 cursor-pointer hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+
+                <svg onClick={() => setAbaAtiva("conquistas")} aria-label="Minhas Conquistas" className={`w-6 h-6 cursor-pointer transition-colors ${abaAtiva === "conquistas" ? "text-white" : "hover:text-white"}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15a6 6 0 0 0 6-6V5H6v4a6 6 0 0 0 6 6z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 21h8" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 5h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2" />
+                </svg>
+
+                <svg aria-label="Buscar" className="w-6 h-6 hover:text-white cursor-pointer transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+
+                <svg aria-label="Configurações" className="w-6 h-6 hover:text-white cursor-pointer transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+
+                <div 
+                  onClick={voltarProLogin}
+                  className="w-9 h-9 rounded-full bg-stone-800 border-2 border-stone-400 cursor-pointer hover:border-white transition-all ml-2 overflow-hidden flex items-center justify-center"
+                  title="Log out"
+                >
+                  <img src="/perfil.jpeg" alt="Davi" className="w-full h-full object-cover" draggable="false" />
+                </div>
+                
+                <span className="font-light tracking-wider ml-1">{hora}</span>
               </div>
-            </div>
-            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">2</span>
-          </div>
+            </header>
 
-          {/* PÁG 5: Índice */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-8 border-b-2 border-dotted border-[#4a1c1c]/30 pb-2">
-              {idioma === "PT" ? "Índice de Obras" : "Table of Contents"}
-            </h2>
-            <ul className="space-y-4 text-sm text-stone-800">
-              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
-                <span className="font-bold">I. PredictiveGuard</span><span className="text-stone-500">Pág 7</span>
-              </li>
-              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
-                <span className="font-bold">II. BitSocial</span><span className="text-stone-500">Pág 9</span>
-              </li>
-              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
-                <span className="font-bold">III. Guia de Vôlei</span><span className="text-stone-500">Pág 11</span>
-              </li>
-              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
-                <span className="font-bold">IV. Matchup Score</span><span className="text-stone-500">Pág 13</span>
-              </li>
-              <li className="flex justify-between border-b border-stone-300/50 pb-1 cursor-pointer hover:text-[#c0392b]">
-                <span className="font-bold">V. Jogo de Ritmo</span><span className="text-stone-500">Pág 15</span>
-              </li>
-            </ul>
-            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">3</span>
-          </div>
+            {/* Projetos */}
+            {abaAtiva === "projetos" && (
+              <>
+                <div className="flex gap-4 items-end mb-10 overflow-visible px-4 h-[300px]">
+                  {PROJETOS.map((projeto, index) => {
+                    const isFocused = index === projetoFocado;
+                    return (
+                      <motion.div
+                        key={projeto.id}
+                        onClick={() => setProjetoFocado(index)}
+                        layout
+                        initial={false}
+                        animate={{
+                          width: isFocused ? 280 : 140,
+                          height: isFocused ? 280 : 140,
+                          y: isFocused ? -20 : 0,
+                        }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className={`rounded-2xl cursor-pointer relative overflow-hidden flex-shrink-0 bg-stone-900
+                          ${isFocused ? "border-[3px] border-white ring-4 ring-white/20 z-10 shadow-2xl" : "border border-stone-700 opacity-50 hover:opacity-100"}`}
+                      >
+                        <img 
+                          src={projeto.thumb} 
+                          alt={projeto.titulo} 
+                          className="w-full h-full object-cover" 
+                          draggable="false"
+                        />
+                      </motion.div>
+                    );
+                  })}
+                </div>
 
-          {/* PÁG 6: Proj 1 (Imagem) */}
-          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
-            <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center">
-              <span className="text-stone-500 text-sm">[Print PredictiveGuard]</span>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-2 justify-center">
-              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">Python</span>
-              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">Scikit-Learn</span>
-            </div>
-            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">4</span>
-          </div>
+                <motion.div 
+                  key={`info-${projetoFocado}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="flex flex-col gap-3 max-w-2xl px-4 mt-auto mb-16"
+                >
+                  <h1 className="text-4xl font-bold tracking-wide text-white drop-shadow-md">{PROJETOS[projetoFocado].titulo}</h1>
+                  <div className="flex items-center gap-3 text-sm">
+                    <span className="px-2 py-1 bg-white text-black font-bold text-xs rounded-sm shadow-sm">HIGHLIGHT</span>
+                    <span className="text-stone-200 font-medium tracking-wide drop-shadow-md">{PROJETOS[projetoFocado].tech}</span>
+                  </div>
+                  <p className="text-stone-300 text-lg leading-relaxed mt-2 drop-shadow-md">{PROJETOS[projetoFocado].descricao}</p>
+                  <div className="mt-6 flex items-center gap-4">
+                    <a href={PROJETOS[projetoFocado].link} target="_blank" className="px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-stone-200 transition-colors flex items-center gap-2 shadow-lg">
+                      <span className="text-xl">▶</span> Ver Projeto
+                    </a>
+                  </div>
+                </motion.div>
+              </>
+            )}
 
-          {/* PÁG 7: Proj 1 (Texto) */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">PredictiveGuard</h2>
-            <p className="text-stone-800 leading-relaxed text-sm text-justify">
-              {idioma === "PT" ? "Modelo de Machine Learning desenvolvido para simular e prever falhas em maquinário industrial, gerando alertas preditivos para evitar paradas não planejadas." : "Machine Learning model developed to simulate and predict industrial machinery failures, generating predictive alerts to prevent unplanned downtime."}
-            </p>
-            <div className="mt-8 flex gap-4">
-              <button className="px-6 py-2 bg-[#4a1c1c] text-white rounded hover:bg-[#3a1d0f] transition-colors text-sm">{idioma === "PT" ? "Ver Código" : "View Code"}</button>
-            </div>
-            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">5</span>
-          </div>
+            {/* Sobre Mim */}
+            {abaAtiva === "sobre" && (
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex flex-col md:flex-row gap-12 max-w-5xl px-4 mt-4"
+              >
+                <div className="w-64 h-80 bg-stone-800/80 border border-stone-600 rounded-xl flex-shrink-0 p-6 flex flex-col items-center shadow-2xl backdrop-blur-sm">
+                   <div className="w-32 h-32 rounded-full bg-stone-900 border-4 border-stone-400 mb-6 overflow-hidden flex items-center justify-center">
+                     <img src="/perfil.jpeg" alt="Davi Cagnato" className="w-full h-full object-cover" draggable="false" />
+                   </div>
+                   <h2 className="text-xl font-bold tracking-wide text-white text-center">Davi Cagnato</h2>
+                   <span className="text-stone-400 text-sm mt-1 text-center">Full-stack Developer</span>
+                </div>
+                
+                <div className="flex flex-col gap-8 flex-1">
+                  <div>
+                    <h1 className="text-3xl font-bold tracking-wide mb-4">Sobre o Autor</h1>
+                    <p className="text-stone-300 text-base md:text-lg leading-relaxed text-justify">
+                      Desenvolvedor Full-stack apaixonado por resolver problemas e dar vida a ideias. Minha base técnica foi construída no ensino médio técnico pelo SESI/SENAI em Desenvolvimento de Sistemas, e hoje atuo como pesquisador bolsista pelo PIBIC. Tenho um interesse crescente pelas áreas de infraestrutura e segurança da informação, buscando sempre criar sistemas resilientes.
+                      <br/><br/>
+                      Acredito muito no equilíbrio entre hard e soft skills: além da dedicação acadêmica que me rendeu premiações e medalhas, atuo em uma equipe semi-profissional de vôlei. O esporte me ensina diariamente sobre trabalho em equipe, comunicação rápida sob pressão e foco — habilidades que aplico todos os dias no código (e que até inspiraram um dos meus projetos no portfólio!).
+                    </p>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold tracking-wide mb-4 text-white">Habilidades</h2>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-stone-800/60 p-4 rounded-lg border border-stone-700 backdrop-blur-sm">
+                        <span className="font-bold text-white block mb-1">Linguagens</span>
+                        <span className="text-stone-400 text-sm">Python, JavaScript, TypeScript, Java, Kotlin</span>
+                      </div>
+                      <div className="bg-stone-800/60 p-4 rounded-lg border border-stone-700 backdrop-blur-sm">
+                        <span className="font-bold text-white block mb-1">Web & UI</span>
+                        <span className="text-stone-400 text-sm">React, Next.js, Tailwind CSS</span>
+                      </div>
+                      <div className="bg-stone-800/60 p-4 rounded-lg border border-stone-700 backdrop-blur-sm col-span-2">
+                        <span className="font-bold text-white block mb-1">Ferramentas, Dados & Infraestrutura</span>
+                        <span className="text-stone-400 text-sm">SQL, Scikit-Learn, Git, Arduino, Princípios de Segurança da Informação</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
-          {/* PÁG 8: Proj 2 (Imagem) */}
-          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
-            <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center">
-              <span className="text-stone-500 text-sm">[Print BitSocial]</span>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-2 justify-center">
-              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">Python</span>
-              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">SQL</span>
-            </div>
-            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">6</span>
-          </div>
+            {/* Conquistas (Trophies PlayStation) */}
+            {abaAtiva === "conquistas" && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col gap-8 max-w-5xl px-4 mt-4 pb-12 overflow-y-auto custom-scrollbar"
+              >
+                <div>
+                  <h1 className="text-3xl font-bold tracking-wide mb-2 text-white flex items-center gap-3">
+                    <span className="text-yellow-500">🏆</span> Galeria de Troféus
+                  </h1>
+                  <p className="text-stone-400">Certificações acadêmicas, olimpíadas e bolsas de pesquisa.</p>
+                </div>
 
-          {/* PÁG 9: Proj 2 (Texto) */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">BitSocial</h2>
-            <p className="text-stone-800 leading-relaxed text-sm text-justify">
-              {idioma === "PT" ? "Rede social voltada para devs, criada como um local descontraído para interagir, compartilhar ideias e relaxar fora do circuito puramente corporativo." : "Social network aimed at devs, created as a relaxed place to interact, share ideas, and unwind outside the corporate circuit."}
-            </p>
-            <div className="mt-8 flex gap-4">
-              <button className="px-6 py-2 bg-[#4a1c1c] text-white rounded hover:bg-[#3a1d0f] text-sm">{idioma === "PT" ? "Ver Projeto" : "View Project"}</button>
-            </div>
-            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">7</span>
-          </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  {/* Troféu Platina: SESI/SENAI */}
+                  <div className="flex items-center gap-6 bg-stone-900/80 p-5 rounded-2xl border border-blue-400/30 backdrop-blur-md shadow-xl cursor-default group">
+                    <svg viewBox="0 0 100 100" className="w-20 h-20 drop-shadow-[0_0_20px_rgba(147,197,253,0.6)] flex-shrink-0">
+                      <defs>
+                        <linearGradient id="platGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#F8FAFC" />
+                          <stop offset="50%" stopColor="#94A3B8" />
+                          <stop offset="100%" stopColor="#334155" />
+                        </linearGradient>
+                        <radialGradient id="sphereGrad" cx="35%" cy="35%" r="65%">
+                          <stop offset="0%" stopColor="#FFFFFF" />
+                          <stop offset="60%" stopColor="#CBD5E1" />
+                          <stop offset="100%" stopColor="#64748B" />
+                        </radialGradient>
+                      </defs>
+                      <path d="M 30 90 L 70 90 L 75 97 L 25 97 Z" fill="url(#platGrad)"/>
+                      <path d="M 35 82 L 65 82 L 70 90 L 30 90 Z" fill="url(#platGrad)"/>
+                      <path d="M 45 70 L 55 70 L 55 82 L 45 82 Z" fill="url(#platGrad)"/>
+                      <path d="M 25 85 C -5 50, 15 20, 30 10 C 15 30, 10 65, 38 75 Z" fill="url(#platGrad)"/>
+                      <path d="M 75 85 C 105 50, 85 20, 70 10 C 85 30, 90 65, 62 75 Z" fill="url(#platGrad)"/>
+                      <path d="M 40 82 C 15 65, 25 30, 38 18 C 25 35, 28 65, 48 72 Z" fill="#E2E8F0"/>
+                      <path d="M 60 82 C 85 65, 75 30, 62 18 C 75 35, 72 65, 52 72 Z" fill="#E2E8F0"/>
+                      <circle cx="50" cy="42" r="24" fill="url(#sphereGrad)" />
+                      <text x="50" y="46" fontFamily="sans-serif" fontSize="12" fill="#94A3B8" textAnchor="middle" fontWeight="900" letterSpacing="1">PS</text>
+                    </svg>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-blue-300 text-xs font-bold uppercase tracking-widest drop-shadow-sm">Troféu de Platina</span>
+                      <h3 className="text-white font-semibold text-lg">Base de Elite</h3>
+                      <p className="text-stone-400 text-sm">Formado no Ensino Médio Técnico pelo SESI/SENAI em Desenvolvimento de Sistemas.</p>
+                    </div>
+                  </div>
 
-          {/* PÁG 10: Proj 3 (Imagem) */}
-          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
-             <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center">
-              <span className="text-stone-500 text-sm">[Print Vôlei]</span>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-2 justify-center">
-              <span className="px-3 py-1 bg-[#4a1c1c] text-[#f4ecc2] text-[10px] rounded-full uppercase tracking-wider">JavaScript</span>
-            </div>
-            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">8</span>
-          </div>
+                  {/* Troféu Ouro: PIBIC */}
+                  <div className="flex items-center gap-6 bg-stone-900/80 p-5 rounded-2xl border border-yellow-600/30 backdrop-blur-md shadow-xl cursor-default">
+                    <svg viewBox="0 0 100 100" className="w-20 h-20 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)] flex-shrink-0">
+                      <defs>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#FDE047" />
+                          <stop offset="50%" stopColor="#EAB308" />
+                          <stop offset="100%" stopColor="#A16207" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M 20 30 C 0 30, 5 65, 35 60" fill="none" stroke="url(#goldGrad)" strokeWidth="6" strokeLinecap="round"/>
+                      <path d="M 80 30 C 100 30, 95 65, 65 60" fill="none" stroke="url(#goldGrad)" strokeWidth="6" strokeLinecap="round"/>
+                      <path d="M 28 20 L 72 20 L 65 65 C 65 80, 55 85, 50 85 C 45 85, 35 80, 35 65 Z" fill="url(#goldGrad)"/>
+                      <path d="M 45 85 L 55 85 L 65 95 L 35 95 Z" fill="url(#goldGrad)"/>
+                      <path d="M 25 20 L 75 20" stroke="#FEF08A" strokeWidth="2" />
+                      <text x="50" y="47" fontFamily="sans-serif" fontSize="11" fill="#713F12" textAnchor="middle" fontWeight="bold">△□</text>
+                      <text x="50" y="59" fontFamily="sans-serif" fontSize="11" fill="#713F12" textAnchor="middle" fontWeight="bold">◯✕</text>
+                    </svg>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-yellow-500 text-xs font-bold uppercase tracking-widest drop-shadow-sm">Troféu de Ouro</span>
+                      <h3 className="text-white font-semibold text-lg">Pesquisador PIBIC</h3>
+                      <p className="text-stone-400 text-sm">Bolsista de iniciação científica, unindo rigor acadêmico à tecnologia prática.</p>
+                    </div>
+                  </div>
 
-          {/* PÁG 11: Proj 3 (Texto) */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">Guia de Vôlei</h2>
-            <p className="text-stone-800 leading-relaxed text-sm text-justify">
-              {idioma === "PT" ? "Transforma regras e táticas complexas de voleibol em uma experiência visual, interativa e responsiva." : "Transforms complex volleyball rules and tactics into a visual, interactive, and highly responsive experience."}
-            </p>
-            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">9</span>
-          </div>
+                  {/* Troféu Prata: Prêmios Acadêmicos */}
+                  <div className="flex items-center gap-6 bg-stone-900/80 p-5 rounded-2xl border border-stone-400/30 backdrop-blur-md shadow-xl cursor-default">
+                    <svg viewBox="0 0 100 100" className="w-20 h-20 drop-shadow-[0_0_15px_rgba(148,163,184,0.5)] flex-shrink-0">
+                      <defs>
+                        <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#F8FAFC" />
+                          <stop offset="50%" stopColor="#94A3B8" />
+                          <stop offset="100%" stopColor="#475569" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M 20 30 C 0 30, 5 65, 35 60" fill="none" stroke="url(#silverGrad)" strokeWidth="6" strokeLinecap="round"/>
+                      <path d="M 80 30 C 100 30, 95 65, 65 60" fill="none" stroke="url(#silverGrad)" strokeWidth="6" strokeLinecap="round"/>
+                      <path d="M 28 20 L 72 20 L 65 65 C 65 80, 55 85, 50 85 C 45 85, 35 80, 35 65 Z" fill="url(#silverGrad)"/>
+                      <path d="M 45 85 L 55 85 L 65 95 L 35 95 Z" fill="url(#silverGrad)"/>
+                      <path d="M 25 20 L 75 20" stroke="#F1F5F9" strokeWidth="2" />
+                      <text x="50" y="47" fontFamily="sans-serif" fontSize="11" fill="#334155" textAnchor="middle" fontWeight="bold">△□</text>
+                      <text x="50" y="59" fontFamily="sans-serif" fontSize="11" fill="#334155" textAnchor="middle" fontWeight="bold">◯✕</text>
+                    </svg>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-stone-300 text-xs font-bold uppercase tracking-widest drop-shadow-sm">Troféu de Prata</span>
+                      <h3 className="text-white font-semibold text-lg">Destaque Lógico</h3>
+                      <p className="text-stone-400 text-sm">Vencedor de prêmios de Melhor Trabalho em Raciocínio Algorítmico e POO.</p>
+                    </div>
+                  </div>
 
-          {/* PÁG 12: Proj 4 (Imagem) */}
-          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
-            <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center"><span className="text-stone-500 text-sm">[Matchup]</span></div>
-            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">10</span>
-          </div>
+                  {/* Troféu Bronze: OBLI e HMUN */}
+                  <div className="flex items-center gap-6 bg-stone-900/80 p-5 rounded-2xl border border-orange-700/30 backdrop-blur-md shadow-xl cursor-default">
+                    <svg viewBox="0 0 100 100" className="w-20 h-20 drop-shadow-[0_0_15px_rgba(194,65,12,0.4)] flex-shrink-0">
+                      <defs>
+                        <linearGradient id="bronzeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#FDBA74" />
+                          <stop offset="50%" stopColor="#C2410C" />
+                          <stop offset="100%" stopColor="#7C2D12" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M 20 30 C 0 30, 5 65, 35 60" fill="none" stroke="url(#bronzeGrad)" strokeWidth="6" strokeLinecap="round"/>
+                      <path d="M 80 30 C 100 30, 95 65, 65 60" fill="none" stroke="url(#bronzeGrad)" strokeWidth="6" strokeLinecap="round"/>
+                      <path d="M 28 20 L 72 20 L 65 65 C 65 80, 55 85, 50 85 C 45 85, 35 80, 35 65 Z" fill="url(#bronzeGrad)"/>
+                      <path d="M 45 85 L 55 85 L 65 95 L 35 95 Z" fill="url(#bronzeGrad)"/>
+                      <path d="M 25 20 L 75 20" stroke="#FFEDD5" strokeWidth="2" />
+                      <text x="50" y="47" fontFamily="sans-serif" fontSize="11" fill="#431407" textAnchor="middle" fontWeight="bold">△□</text>
+                      <text x="50" y="59" fontFamily="sans-serif" fontSize="11" fill="#431407" textAnchor="middle" fontWeight="bold">◯✕</text>
+                    </svg>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-orange-500 text-xs font-bold uppercase tracking-widest drop-shadow-sm">Troféu de Bronze</span>
+                      <h3 className="text-white font-semibold text-lg">Comunicação Global</h3>
+                      <p className="text-stone-400 text-sm">Medalhista de Bronze na OBLI (2024) e participação na HMUN (2025).</p>
+                    </div>
+                  </div>
 
-          {/* PÁG 13: Proj 4 (Texto) */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">Matchup Score</h2>
-            <p className="text-stone-800 text-sm text-justify">
-              {idioma === "PT" ? "Plataforma para reserva de quadras e criação de eventos esportivos inspirada no sistema de lobbies." : "Platform for booking courts and creating sports events inspired by game lobby systems."}
-            </p>
-            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">11</span>
-          </div>
+                </div>
+              </motion.div>
+            )}
 
-          {/* PÁG 14: Proj 5 (Imagem) */}
-          <div className="bg-[#f4ecc2] p-8 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
-            <div className="w-full h-64 bg-stone-300 rounded-md border-4 border-white shadow-md flex items-center justify-center"><span className="text-stone-500 text-sm">[Ritmo]</span></div>
-            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">12</span>
-          </div>
-
-          {/* PÁG 15: Proj 5 (Texto) */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-l border-black/5 h-full">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-4">Jogo de Ritmo</h2>
-            <p className="text-stone-800 text-sm text-justify">
-              {idioma === "PT" ? "Jogo de ritmo em Java com suporte a guitarra física (Arduino)." : "Rhythm game in Java with physical guitar support via Arduino."}
-            </p>
-            <span className="absolute bottom-6 right-6 text-stone-400 text-sm">13</span>
-          </div>
-
-          {/* PÁG 16: Contato */}
-          <div className="bg-[#f4ecc2] p-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.1)] relative border-r border-black/5 h-full flex flex-col items-center justify-center">
-            <h2 className="text-3xl font-bold text-[#4a1c1c] mb-6">{idioma === "PT" ? "Contato" : "Contact"}</h2>
-            <p className="text-stone-700">email@exemplo.com</p>
-            <span className="absolute bottom-6 left-6 text-stone-400 text-sm">14</span>
-          </div>
-
-          {/* PÁG 17: Contracapa interna */}
-          <div className="bg-[#5c331f] border-l-8 border-[#3a1d0f] shadow-[inset_-15px_0_30px_rgba(0,0,0,0.8)] rounded-r-md relative h-full">
-             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-20 mix-blend-multiply pointer-events-none"></div>
-          </div>
-
-          {/* PÁG 18: Contracapa Externa */}
-          <div className="bg-[#5c331f] border-r-8 border-[#3a1d0f] shadow-[-10px_10px_30px_rgba(0,0,0,0.8)] rounded-l-md relative h-full flex items-center justify-center">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-30 mix-blend-multiply pointer-events-none"></div>
-            <div className="w-16 h-16 border-2 border-[#3a1d0f] rounded-full opacity-30"></div>
-          </div>
-
-        </HTMLFlipBook>
-      </div>
-
-      {/* Versão Mobile */}
-      <div className="md:hidden text-stone-300 text-center px-6 z-10">
-        <p className="text-xl border-b border-stone-600 pb-2 mb-2 font-bold">Atenção</p>
-        <p>A experiência imersiva deste tomo requer uma tela mais ampla.</p>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
