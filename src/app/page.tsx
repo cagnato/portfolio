@@ -12,11 +12,12 @@ const PROJETOS = [
       pt: "Modelo de Machine Learning para simular e prever falhas em maquinário industrial.",
       en: "Machine Learning model to simulate and predict failures in industrial machinery."
     },
-    thumb: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=400&auto=format&fit=crop",
-    bg: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=1920&auto=format&fit=crop",
+    thumb: "/predictiveguard.png",
+    bg: "/predictiveguard.png",
     bgColor: "#7f1d1d",
     linkGithub: "https://github.com/cagnato/predictive-guard",
     linkApp: null,
+    linkDownload: "https://github.com/cagnato/predictive-guard/releases/tag/v1.0.0",
   },
   {
     id: 2,
@@ -26,8 +27,8 @@ const PROJETOS = [
       pt: "Rede social voltada para devs interagirem e compartilharem ideias.",
       en: "Social network aimed at devs to interact and share ideas."
     },
-    thumb: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=400&auto=format&fit=crop",
-    bg: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1920&auto=format&fit=crop",
+    thumb: "/socialbit.png",
+    bg: "/socialbit.png",
     bgColor: "#1e3a8a",
     linkGithub: "https://github.com/cagnato/SocialBit",
     linkApp: "https://socialbit.larissaadames.dev/home/",
@@ -54,22 +55,22 @@ const PROJETOS = [
       pt: "Plataforma de reserva de quadras inspirada em lobbies de jogos.",
       en: "Court reservation platform inspired by gaming lobbies."
     },
-    thumb: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=400&auto=format&fit=crop",
-    bg: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920&auto=format&fit=crop",
+    thumb: "/matchupscore.png",
+    bg: "/matchupscore.png",
     bgColor: "#581c87",
     linkGithub: "https://github.com/cagnato/MatchUp-Score",
     linkApp: "https://matchupscore.larissaadames.dev/",
   },
   {
     id: 5,
-    titulo: "Jogo de Ritmo",
+    titulo: "PowerJorge",
     tech: "Java • Arduino",
     descricao: {
       pt: "Jogo de ritmo com suporte a guitarra física (Projeto PowerJorge).",
       en: "Rhythm game with physical guitar support (PowerJorge Project)."
     },
-    thumb: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=400&auto=format&fit=crop",
-    bg: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=1920&auto=format&fit=crop",
+    thumb: "/powerjorge.png",
+    bg: "/powerjorge.png",
     bgColor: "#78350f",
     linkGithub: "https://github.com/larissaadames/PowerJorge/tree/Main4",
     linkApp: null,
